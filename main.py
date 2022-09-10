@@ -7,8 +7,12 @@ from openpyxl import load_workbook
 loop = False
 
 def run():
+    print('Step 1')
+    global loop
+    loop = False
     wb = load_workbook(filename='Data.xlsx')
     sheet = wb['Sheet1']
+    print('Step 2')
 
     def decoder(image):
         gray_img = cv2.cvtColor(image, 0)
@@ -51,6 +55,7 @@ def run():
 
 
     cap = cv2.VideoCapture(0)
+    print('Step 3')
     while loop != True:
         ret, frame = cap.read()
         values = decoder(frame)

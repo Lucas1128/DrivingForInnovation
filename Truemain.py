@@ -1,19 +1,24 @@
 import sys
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMainWindow
+import webbrowser
 
 import main
 import sqlite3
 import time
 from Ui_MainWindow import Ui_MainWindow
+import openpyxl
 
 connection = sqlite3.connect('DrinksRecord.db')
 cursor = connection.cursor()
 
 global DrinkName
 global ABYV
-global weight
-global gender
+global currentBAC
+
+wb = openpyxl.load_workbook(filename='Data.xlsx')
+sheet = wb['Sheet2']
+
 
 class MainWindow:
     def __init__(self):
@@ -40,8 +45,19 @@ class MainWindow:
 
         self.ui.pushButton_7.clicked.connect(self.SetConfig)
 
+        self.ui.PublicT.clicked.connect(self.pubtran)
+        self.ui.Rideshare.clicked.connect(self.rideshare)
+
+    def pubtran(self):
+        webbrowser.open('https://translink.com.au/')
+
+    def rideshare(self):
+        webbrowser.open('https://www.uber.com/au/en/ride/')
+
+
     def show(self):
         self.main_win.show()
+        self.updateslider()
 
     def Scan(self):
         result = main.run()
@@ -71,6 +87,7 @@ class MainWindow:
 
     def returnhome(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.Homepage)
+        self.updateslider()
 
     def Volume(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.WeightPage)
@@ -115,20 +132,122 @@ class MainWindow:
 
         self.returnhome()
 
-        global gender
-        global weight
 
-        #FILENAME.MATTYBFUNCTION(gender, weight)
+    def updateslider(self):
+        BAC = self.calcBAC()
+        BAC = round(BAC, 3)
+        self.ui.BACNumber.display(str(BAC))
+
+        self.ui.Description.setStyleSheet("font-weight: bold")
+
+        if BAC >= 0.05:
+            self.ui.Description.setText('Our estimates show that you have past the legal limit for driving, please consider utilising the alternatives listed below')
+            self.ui.Description.setStyleSheet("color: red")
+            self.ui.PublicT.setStyleSheet("background-color: red")
+            self.ui.Rideshare.setStyleSheet("background-color: red")
+            self.ui.Warning.setStyleSheet("color: red")
+        elif BAC < 0.002:
+            self.ui.Description.setText('You\'re blood alcohol levels are estimated to be negligible, enjoy your night and remember to drink safe')
+            self.ui.Description.setStyleSheet("color: black")
+            self.ui.PublicT.setStyleSheet("")
+            self.ui.Rideshare.setStyleSheet("")
+            self.ui.Warning.setStyleSheet("color: black")
+
+        else:
+            self.ui.Description.setText('You are estimated to be within the legal limit for driving, however, please continue to exercise your own judgment to protect the saftey of yourself, and those around you!')
+            self.ui.Description.setStyleSheet("color: gold; font-weight: bold; background-color: black;")
+            self.ui.PublicT.setStyleSheet("background-color: gold")
+            self.ui.Rideshare.setStyleSheet("background-color: gold")
+            self.ui.Warning.setStyleSheet("color: gold; font-weight: bold; background-color: black;")
+
+        BAC = round(BAC * 1000)
+        self.ui.Dial.setValue(BAC)
+
+
+    def calcBAC(self):
+
+        cursor.execute("""
+        SELECT * FROM User
+        """)
+
+        connection.commit()
+
+        results = cursor.fetchall()
+
+        weight = results[0][1]
+        gender = results[0][2]
+
+        global currentBAC
+
+        weight = weight * 1000
+
+        if gender == 'Male':
+            r = 0.68
+        elif gender == 'Female':
+            r = 0.55
+        else:
+            r = 0.615
+
+        cursor.execute(
+            """
+            SELECT * FROM DrinksHistory
+            """
+        )
+        drinks = (cursor.fetchall())
+        currentBAC = 0
+
+
+        drinkcounter = 1
+        for i in range(len(drinks)):
+            if drinkcounter == len(drinks):
+                alchohol = drinks[i][3]
+                timeOfDrink = drinks[i][2]
+                now = int(time.time())
+                timediff = now - timeOfDrink
+                timediff = timediff/3600
+                newBAC = (alchohol/ (weight * r)) * 100
+                currentBAC = (currentBAC + newBAC) - (timediff * 0.015)
+                if currentBAC < 0:
+                    currentBAC = 0
+                else:
+                    pass
+            else:
+                alchohol = drinks[i][3]
+                timeOfDrink = drinks[i][2]
+                timeOfNextDrink= drinks[int(i+1)][2]
+                timediff = timeOfNextDrink - timeOfDrink
+                timediff = timediff / 3600
+                newBAC = (alchohol / (weight * r)) * 100
+                currentBAC = (currentBAC + newBAC) - (timediff * 0.015)
+                if currentBAC < 0:
+                    currentBAC = 0
+                else:
+                    pass
+
+            drinkcounter = drinkcounter + 1
+        return currentBAC
+
+
+
+
 
     def ConfigPage(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.ConfigPage)
 
     def SetConfig(self):
-        global gender
         gender = self.ui.comboBox.currentText()
-
-        global weight
         weight = self.ui.spinBox_2.value()
+
+        cursor.execute(
+            """
+            UPDATE User
+            SET weight = (:weight), gender = (:gender)
+            """,
+            {'weight' : weight,
+             'gender' : gender}
+        )
+
+        connection.commit()
 
         self.returnhome()
 

@@ -6,14 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>947</height>
+    <width>784</width>
+    <height>945</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">#centralwidget{background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(35, 193, 0, 255), stop:1 rgba(255, 255, 255, 255));}
+</string>
+   </property>
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
@@ -23,7 +27,16 @@
       <height>911</height>
      </rect>
     </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
     <widget class="QWidget" name="Homepage">
+     <property name="styleSheet">
+      <string notr="true">#Homepage{background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(35, 193, 0, 255), stop:1 rgba(255, 255, 255, 255));}</string>
+     </property>
      <widget class="QLabel" name="Title1">
       <property name="geometry">
        <rect>
@@ -143,7 +156,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: green;</string>
+       <string notr="true">color: black;</string>
       </property>
       <property name="text">
        <string>You are estimated to be within the legal limit for driving, however, please continue to exercise your own judgment to protect the saftey of yourself, and those around you!</string>
@@ -160,7 +173,7 @@
        <rect>
         <x>40</x>
         <y>540</y>
-        <width>181</width>
+        <width>331</width>
         <height>111</height>
        </rect>
       </property>
@@ -176,9 +189,9 @@
      <widget class="QPushButton" name="LogButton">
       <property name="geometry">
        <rect>
-        <x>310</x>
+        <x>410</x>
         <y>540</y>
-        <width>181</width>
+        <width>341</width>
         <height>111</height>
        </rect>
       </property>
@@ -189,24 +202,6 @@
       </property>
       <property name="text">
        <string>Log New Drink</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="ReviewButton">
-      <property name="geometry">
-       <rect>
-        <x>580</x>
-        <y>540</y>
-        <width>181</width>
-        <height>111</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Review Log History</string>
       </property>
      </widget>
      <widget class="QLabel" name="Warning">
@@ -246,6 +241,9 @@
         <bold>false</bold>
        </font>
       </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="text">
        <string>Public Transportation</string>
       </property>
@@ -270,6 +268,9 @@
      </widget>
     </widget>
     <widget class="QWidget" name="ConfirmPage">
+     <property name="styleSheet">
+      <string notr="true">#ConfirmPage{background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(35, 193, 0, 255), stop:1 rgba(255, 255, 255, 255));}</string>
+     </property>
      <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
@@ -377,6 +378,9 @@
      </widget>
     </widget>
     <widget class="QWidget" name="WeightPage">
+     <property name="styleSheet">
+      <string notr="true">#WeightPage{background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(35, 193, 0, 255), stop:1 rgba(255, 255, 255, 255));}</string>
+     </property>
      <widget class="QSpinBox" name="spinBox">
       <property name="geometry">
        <rect>
@@ -585,6 +589,9 @@
      </widget>
     </widget>
     <widget class="QWidget" name="ConfigPage">
+     <property name="styleSheet">
+      <string notr="true">#ConfigPage{background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(35, 193, 0, 255), stop:1 rgba(255, 255, 255, 255));}</string>
+     </property>
      <widget class="QLabel" name="label_4">
       <property name="geometry">
        <rect>
@@ -718,12 +725,11 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>784</width>
      <height>26</height>
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>
